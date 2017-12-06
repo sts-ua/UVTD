@@ -36,6 +36,8 @@ class Database(object):
             translation=translation
         )
         self.session.add(new_token)
+
+    def commit(self):
         self.session.commit()
 
     def get_token(self, _id):

@@ -49,8 +49,8 @@ def parce_source(files):
             with open(file.name, encoding='utf-8') as file:
                 source_file = file.read()
         pattern = re.compile(
-            r'\"(?P<indentifactor>.*)\".*\"(?P<translation>.*)\"\n'
-            r'\"\[english].*\".*\"(?P<original>.*)\"', re.MULTILINE)
+            r'\"(?P<indentifactor>.*?)\".*?\"(?P<translation>.*)\"\n'
+            r'\"\[english].*?\".*?\"(?P<original>.*)\"', re.MULTILINE)
         match = pattern.findall(source_file)
         total_tokens += len(match)
         log(f'Found {len(match)} tokens')
@@ -68,7 +68,8 @@ def write_csv(filename, data):
         writer.writerow(['Індентифікатор токена', 'Переклад', 'Оригінал'])
         for file in data.keys():
             for row in data[file]:
-                writer.writerow([*row])
+                for match in row:
+                    writer.writerow(match)
 
 
 def write_db(data):
@@ -79,6 +80,7 @@ def write_db(data):
                     (key, translation, original) = match
                     db.add_token(key, file, original, translation)
                     log(f'Add {key}')
+                db.commit()
 
 
 def log(phrase):
