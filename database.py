@@ -20,13 +20,10 @@ class Token(Base):
 class Database(object):
     def __init__(self):
         engine = create_engine('sqlite:///database.db')
+        Base.metadata.create_all(engine)
         Base.metadata.bind = engine
         DBSession = sessionmaker(bind=engine)
         self.session = DBSession()
-
-    def create(self):
-        engine = create_engine('sqlite:///database.db')
-        Base.metadata.create_all(engine)
 
     def add_token(self, key, branch, original, translation):
         new_token = Token(
@@ -42,6 +39,9 @@ class Database(object):
 
     def get_token(self, _id):
         return self.session.query(Token).filter_by(id=_id).one()
+
+    def get_branch(self, name):
+        return self.session.query(Token).filter_by(branch=name)
 
     def get_tokens(self):
         return self.session.query(Token).all()
